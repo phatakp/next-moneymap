@@ -1,18 +1,12 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+// For Node.js - make sure to install the 'ws' and 'bufferutil' packages
+import { Pool, neonConfig } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-serverless";
+import ws from "ws";
 
 import { env } from "@/env";
-import * as schema from "./schema";
+import * as schema from "./schema/index";
 
-/**
- * Cache the database connection in development. This avoids creating a new connection on every HMR
- * update.
- */
-const globalForDb = globalThis as unknown as {
-  conn: postgres.Sql | undefined;
-};
+neonConfig.webSocketConstructor = ws;
 
-const conn = globalForDb.conn ?? postgres(env.DATABASE_URL);
-if (env.NODE_ENV !== "production") globalForDb.conn = conn;
-
-export const db = drizzle(conn, { schema });
+const pool = new Pool({ connectionString: env.DATABASE_URL, max: 1 });
+export const db = drizzle({ client: pool, schema });

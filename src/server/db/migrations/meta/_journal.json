@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1746334148096,
+      "tag": "0000_mixed_jackpot",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1746349287685,
+      "tag": "0001_wise_proteus",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1746350905496,
+      "tag": "0002_quiet_captain_america",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1746449365846,
+      "tag": "0003_dusty_wither",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1746457931318,
+      "tag": "0004_messy_jubilee",
+      "breakpoints": true
+    }
+  ]
+}

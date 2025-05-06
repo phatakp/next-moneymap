@@ -1,0 +1,262 @@
+[
+    {
+        "name": "Cash",
+        "type": "Savings"
+    },
+    {
+        "name": "ICICI",
+        "type": "Savings"
+    },
+    {
+        "name": "HDFC",
+        "type": "Savings"
+    },
+    {
+        "name": "SBI",
+        "type": "Savings"
+    },
+    {
+        "name": "AXIS",
+        "type": "Savings"
+    },
+    {
+        "name": "HSBC",
+        "type": "Savings"
+    },
+    {
+        "name": "Bank of Baroda",
+        "type": "Savings"
+    },
+    {
+        "name": "IndusInd",
+        "type": "Savings"
+    },
+    {
+        "name": "SBM",
+        "type": "Savings"
+    },
+    {
+        "name": "RBL",
+        "type": "Savings"
+    },
+    {
+        "name": "Kotak",
+        "type": "Savings"
+    },
+    {
+        "name": "IDFC",
+        "type": "Savings"
+    },
+    {
+        "name": "Bank of Maharashtra",
+        "type": "Savings"
+    },
+    {
+        "name": "ICICI",
+        "type": "Mortgage"
+    },
+    {
+        "name": "HDFC",
+        "type": "Mortgage"
+    },
+    {
+        "name": "SBI",
+        "type": "Mortgage"
+    },
+    {
+        "name": "AXIS",
+        "type": "Mortgage"
+    },
+    {
+        "name": "HSBC",
+        "type": "Mortgage"
+    },
+    {
+        "name": "Bank of Baroda",
+        "type": "Mortgage"
+    },
+    {
+        "name": "IndusInd",
+        "type": "Mortgage"
+    },
+    {
+        "name": "SBM",
+        "type": "Mortgage"
+    },
+    {
+        "name": "RBL",
+        "type": "Mortgage"
+    },
+    {
+        "name": "Kotak",
+        "type": "Mortgage"
+    },
+    {
+        "name": "IDFC",
+        "type": "Mortgage"
+    },
+    {
+        "name": "Bank of Maharashtra",
+        "type": "Mortgage"
+    },
+    {
+        "name": "ICICI",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "HDFC",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "SBI",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "AXIS",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "HSBC",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "Bank of Baroda",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "IndusInd",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "SBM",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "RBL",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "Kotak",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "IDFC",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "Bank of Maharashtra",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "OneCard",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "Amex",
+        "type": "Credit-Card"
+    },
+    {
+        "name": "ICICI",
+        "type": "Investment"
+    },
+    {
+        "name": "HDFC",
+        "type": "Investment"
+    },
+    {
+        "name": "SBI",
+        "type": "Investment"
+    },
+    {
+        "name": "AXIS",
+        "type": "Investment"
+    },
+    {
+        "name": "Zerodha",
+        "type": "Investment"
+    },
+    {
+        "name": "IndMoney",
+        "type": "Investment"
+    },
+    {
+        "name": "SBM",
+        "type": "Investment"
+    },
+    {
+        "name": "PhonePe",
+        "type": "Investment"
+    },
+    {
+        "name": "Kotak",
+        "type": "Investment"
+    },
+    {
+        "name": "FundsIndia",
+        "type": "Investment"
+    },
+    {
+        "name": "Dezerv",
+        "type": "Investment"
+    },
+    {
+        "name": "PayTm",
+        "type": "Investment"
+    },
+    {
+        "name": "Groww",
+        "type": "Investment"
+    },
+    {
+        "name": "Amazon",
+        "type": "Wallet"
+    },
+    {
+        "name": "Google",
+        "type": "Wallet"
+    },
+    {
+        "name": "Big Basket",
+        "type": "Wallet"
+    },
+    {
+        "name": "Zomato",
+        "type": "Wallet"
+    },
+    {
+        "name": "Country Delight",
+        "type": "Wallet"
+    },
+    {
+        "name": "PayTm",
+        "type": "Wallet"
+    },
+    {
+        "name": "Swiggy",
+        "type": "Wallet"
+    },
+    {
+        "name": "PhonePe",
+        "type": "Wallet"
+    },
+    {
+        "name": "Myntra",
+        "type": "Wallet"
+    },
+    {
+        "name": "Pluxee",
+        "type": "Wallet"
+    },
+    {
+        "name": "Airtel",
+        "type": "Wallet"
+    },
+    {
+        "name": "NPS",
+        "type": "Retirals"
+    },
+    {
+        "name": "EPF",
+        "type": "Retirals"
+    }
+]
