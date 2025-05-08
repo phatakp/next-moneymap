@@ -1,4 +1,4 @@
-import { INV_TYPES } from "@/lib/constants";
+import { ACCT_TYPES, INV_TYPES } from "@/lib/constants";
 import { sql } from "drizzle-orm";
 import {
   boolean,
@@ -17,8 +17,8 @@ import {
   createSelectSchema,
   createUpdateSchema,
 } from "drizzle-zod";
-import type { z } from "zod";
-import { banks, banksSchema } from "./banks.schema";
+import { z } from "zod";
+import { acctTypeSchema, banks, banksSchema } from "./banks.schema";
 import { users } from "./users.schema";
 
 export const invTypeEnum = pgEnum("inv_type_enum", INV_TYPES);
@@ -80,14 +80,146 @@ export const equityAccountsInsertSchema = createInsertSchema(equityAccounts);
 export const equityAccountsUpdateSchema = createUpdateSchema(equityAccounts);
 
 // form schemas
+export const acctNumSchema = accountsSchema.pick({ num: true });
 export const acctIdSchema = accountsSchema.pick({ id: true });
 export const invTypeSchema = accountsSchema.pick({ invType: true });
 export const acctInsertFormSchema = accountsInsertSchema
-  .extend({})
-  .and(mfAccountsInsertSchema.extend({}))
-  .and(equityAccountsInsertSchema.extend({}));
+  .omit({ userId: true })
+  .extend({
+    name: z.string({ required_error: "Name is required" }),
+    num: z.string({ required_error: "Account Number is required" }),
+    type: z.enum(ACCT_TYPES),
+    balance: z.coerce.number().positive({ message: "Balance is required" }),
+    value: z.coerce.number().positive({ message: "Value is required" }),
+  })
+  .and(
+    mfAccountsInsertSchema.omit({ id: true }).extend({
+      nav: z.coerce.number({ message: "NAV is required" }).optional(),
+      units: z.coerce.number({ message: "Units is required" }).optional(),
+      sipAmount: z.coerce
+        .number({ message: "SIP Amount is required" })
+        .optional(),
+    }),
+  )
+  .and(
+    equityAccountsInsertSchema.omit({ id: true }).extend({
+      quantity: z.coerce.number({ message: "Quantity is required" }).optional(),
+      currPrice: z.coerce
+        .number({ message: "Curr Price is required" })
+        .optional(),
+      buyPrice: z.coerce
+        .number({ message: "Buying Price is required" })
+        .optional(),
+    }),
+  )
+  .superRefine((data, ctx) => {
+    if (!data.value) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Current Value is required",
+        path: ["value"],
+      });
+    }
+    if (data.type === "Investment" && !data.invType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Investment type is required",
+        path: ["invType"],
+      });
+    }
+    if (data.type !== "Investment" && !!data.invType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Type should be investment",
+        path: ["type"],
+      });
+    }
+
+    //Mutual Fund
+    if (
+      data.invType !== "Mutual-Fund" &&
+      (!!data.nav || !!data.units || data.isSip || !!data.sipAmount)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "MF fields should not be populated",
+        path: ["invType"],
+      });
+    }
+    if (data.invType === "Mutual-Fund" && !data.nav) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "NAV is required",
+        path: ["nav"],
+      });
+    }
+    if (data.invType === "Mutual-Fund" && !data.units) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Units is required",
+        path: ["units"],
+      });
+    }
+    if (data.invType === "Mutual-Fund" && !data.isSip && !!data.sipAmount) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Should be SIP type",
+        path: ["isSip"],
+      });
+    }
+    if (data.invType === "Mutual-Fund" && data.isSip && !data.sipAmount) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "SIP Amount is required",
+        path: ["sipAmount"],
+      });
+    }
+
+    //Equity
+    if (
+      data.invType !== "Equity" &&
+      (!!data.quantity || !!data.currPrice || data.buyPrice || !!data.prefix)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Equity fields should not be populated",
+        path: ["invType"],
+      });
+    }
+    if (data.invType === "Equity" && !data.quantity) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Quantity is required",
+        path: ["quantity"],
+      });
+    }
+    if (data.invType === "Equity" && !data.currPrice) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Current Price is required",
+        path: ["currPrice"],
+      });
+    }
+    if (data.invType === "Equity" && !data.buyPrice) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Buying Price is required",
+        path: ["buyPrice"],
+      });
+    }
+    if (data.invType === "Equity" && !data.prefix) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Prefix is required",
+        path: ["prefix"],
+      });
+    }
+  });
 
 //types
+export type AcctType = z.infer<typeof acctTypeSchema>["type"];
 export type AccountWithBank = z.infer<typeof accountsSchema> & {
   bank: z.infer<typeof banksSchema>;
+  mf?: z.infer<typeof mfAccountsSchema>;
+  equity?: z.infer<typeof equityAccountsSchema>;
 };

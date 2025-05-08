@@ -1,3 +1,109 @@
-export default function AccountsTypePage() {
-  return <div>AccountsTypePage</div>;
+import {
+  AmountField,
+  Currency,
+  RupeeIcon,
+  Value,
+} from "@/components/shared/amount-field";
+import BankLogo from "@/components/shared/bank-logo";
+import Icon from "@/components/shared/icon";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { masked_acct } from "@/lib/utils";
+import type { AcctType } from "@/server/db/schema";
+import { api } from "@/trpc/server";
+import { ArrowDownLeft, ArrowUpRight, PlusCircle } from "lucide-react";
+import AcctModal from "../_components/acct-modal";
+
+export default async function AccountsTypePage({
+  params,
+}: {
+  params: Promise<{ type: string }>;
+}) {
+  const { type } = await params;
+  const accounts = await api.bankAccounts.getUserAccountsByType({
+    type: type as AcctType,
+  });
+  const total = accounts.reduce((acc, b) => acc + b.value, 0);
+
+  return (
+    <div className="grid w-full gap-4 md:grid-cols-4">
+      <div className="flex max-w-screen flex-col gap-4 md:col-span-3">
+        <Card>
+          <CardHeader>
+            <CardTitle>Total {type}</CardTitle>
+            <CardAction>
+              <Icon name={type} />
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <AmountField>
+              <Currency />
+              <Value showfull className="text-4xl">
+                {total}
+              </Value>
+            </AmountField>
+            <div className="my-4 flex items-center gap-4">
+              <AcctModal id={`add-acct-new`} type={type as AcctType}>
+                <Button>
+                  <PlusCircle /> New{" "}
+                  <span className="hidden sm:flex">Account</span>
+                </Button>
+              </AcctModal>
+              <Button variant={"destructive"}>
+                Expense <ArrowUpRight />
+              </Button>
+              <Button variant={"success"}>
+                Receive <ArrowDownLeft />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Your {type} accounts</CardTitle>
+            <CardDescription>
+              You have {accounts.length} accounts
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-2">
+              {accounts.map((acct) => (
+                <AcctModal
+                  key={acct.id}
+                  id={`edit-acct-${acct.id}`}
+                  type={type as AcctType}
+                  acct={acct}
+                >
+                  <div className="flex items-center justify-between space-y-4">
+                    <div className="flex items-center gap-4">
+                      <BankLogo
+                        src={`/bank-logos/${acct.bank.name.toLowerCase()}.png`}
+                      />
+                      <div className="flex flex-col items-start justify-baseline truncate overflow-clip">
+                        <span>{acct.name}</span>
+                        <span className="text-muted-foreground text-sm">
+                          {masked_acct(acct.num)}
+                        </span>
+                      </div>
+                    </div>
+                    <AmountField>
+                      <RupeeIcon />
+                      <Value className="text-xl">{acct.value}</Value>
+                    </AmountField>
+                  </div>
+                </AcctModal>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
 }

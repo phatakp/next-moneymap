@@ -1,8 +1,8 @@
 "use client";
 
-import { Mountain } from "lucide-react";
 import * as React from "react";
 
+import Icon from "@/components/shared/icon";
 import { NavMain } from "@/components/shared/nav-main";
 import { NavUser } from "@/components/shared/nav-user";
 import {
@@ -28,7 +28,7 @@ export default function AppSidebar({
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
                 <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Mountain className="size-6" />
+                  <Icon name="logo" className="size-6" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="title text-xl font-semibold">MoneyMap</span>

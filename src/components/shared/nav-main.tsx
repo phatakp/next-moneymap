@@ -1,14 +1,8 @@
 "use client";
 
-import {
-  ChartPieIcon,
-  ChevronRight,
-  ClipboardTypeIcon,
-  LandmarkIcon,
-  UsersIcon,
-  type LucideIcon,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
+import Icon from "@/components/shared/icon";
 import {
   Collapsible,
   CollapsibleContent,
@@ -30,12 +24,6 @@ import { capitalize, cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const icons: Record<string, LucideIcon> = {
-  dashboard: ChartPieIcon,
-  accounts: LandmarkIcon,
-  transactions: ClipboardTypeIcon,
-  groups: UsersIcon,
-};
 export function NavMain() {
   const pathname = usePathname();
   const items = NAV_LINKS.map((link) => {
@@ -43,7 +31,6 @@ export function NavMain() {
     return {
       title: link,
       url,
-      icon: icons[link]!,
       isActive: url === pathname,
       items:
         link === "accounts"
@@ -77,7 +64,7 @@ export function NavMain() {
                 )}
               >
                 <Link href={item.url}>
-                  <item.icon className="size-6" />
+                  <Icon name={item.title} className="size-6" />
                   <span className="text-lg capitalize">{item.title}</span>
                 </Link>
               </SidebarMenuButton>
