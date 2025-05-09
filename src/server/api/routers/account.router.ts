@@ -102,6 +102,89 @@ export const bankAccountRouter = createTRPCRouter({
       });
     }),
 
+  update: protectedProcedure
+    .input(acctInsertFormSchema)
+    .mutation(async ({ ctx, input }) => {
+      const {
+        nav,
+        units,
+        isSip,
+        sipAmount,
+        type,
+        currPrice,
+        buyPrice,
+        quantity,
+        prefix,
+        ...mainAcctValues
+      } = input;
+
+      if (!input?.id)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "ID is required",
+        });
+
+      return await ctx.db.transaction(async (tx) => {
+        const [acc] = await tx
+          .select()
+          .from(bankAccounts)
+          .where(
+            and(
+              eq(bankAccounts.id, input.id!),
+              eq(bankAccounts.userId, ctx.user.id),
+            ),
+          );
+
+        if (!acc)
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Account not found",
+          });
+
+        if (input.isDefault && !acc.isDefault) {
+          await tx
+            .update(bankAccounts)
+            .set({ isDefault: false })
+            .where(
+              and(
+                eq(bankAccounts.userId, ctx.user.id),
+                eq(bankAccounts.isDefault, true),
+              ),
+            )
+            .returning();
+        }
+        await tx
+          .update(bankAccounts)
+          .set({
+            name: mainAcctValues.name,
+            num: mainAcctValues.num,
+            balance: mainAcctValues.balance,
+            value: mainAcctValues.value,
+            isDefault: mainAcctValues.isDefault,
+            asOfDate: new Date().toISOString().split("T")[0],
+          })
+          .where(eq(bankAccounts.id, acc.id));
+
+        if (input.invType === "Mutual-Fund") {
+          await tx
+            .update(mfAccounts)
+            .set({ nav: nav!, units: units!, isSip, sipAmount })
+            .where(eq(mfAccounts.id, acc.id));
+        }
+        if (input.invType === "Equity") {
+          await tx
+            .update(equityAccounts)
+            .set({
+              currPrice: currPrice!,
+              buyPrice: buyPrice!,
+              quantity: quantity!,
+            })
+            .where(eq(equityAccounts.id, acc.id));
+        }
+        return acc;
+      });
+    }),
+
   getUserStats: protectedProcedure.query(async ({ ctx }) => {
     const stats = await ctx.db
       .select({

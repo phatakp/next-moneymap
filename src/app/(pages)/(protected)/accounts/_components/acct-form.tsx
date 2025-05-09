@@ -5,16 +5,13 @@ import FormErrorArea from "@/components/shared/form-error-area";
 import { FormInput } from "@/components/shared/form-input";
 import { FormSelect } from "@/components/shared/form-select";
 import { useModal } from "@/components/shared/modal";
+import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ACCT_TYPES, INV_TYPES } from "@/lib/constants";
 import { acct_number_format } from "@/lib/utils";
-import {
-  acctInsertFormSchema,
-  type AccountWithBank,
-  type AcctType,
-} from "@/server/db/schema";
+import { acctInsertFormSchema } from "@/server/db/schema";
 import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { skipToken } from "@tanstack/react-query";
@@ -28,14 +25,9 @@ import { useAcctFormContext } from "../_providers/acct-form-provider";
 const typeOptions = ACCT_TYPES.map((t) => ({ label: t, value: t }));
 const invOptions = INV_TYPES.map((t) => ({ label: t, value: t }));
 
-export default function AcctForm({
-  type,
-  acct,
-}: {
-  type?: AcctType;
-  acct?: AccountWithBank;
-}) {
-  const { banks, isBanksLoading } = useAcctFormContext();
+export default function AcctForm() {
+  const { banks, isBanksLoading, type, acct, setFormSubmitting } =
+    useAcctFormContext();
   const router = useRouter();
   const { modalId, closeModal } = useModal();
 
@@ -64,10 +56,13 @@ export default function AcctForm({
   const { setValue, setError } = form;
   const formData = form.watch();
 
-  const bankOptions =
-    banks
-      ?.filter((b) => b.type === formData.type && b.name !== "Cash")
-      .map((b) => ({ label: b.name, value: b.id })) ?? [];
+  const bankOptions = !acct?.id
+    ? (banks
+        ?.filter((b) => b.type === formData.type && b.name !== "Cash")
+        .map((b) => ({ label: b.name, value: b.id })) ?? [])
+    : (banks
+        ?.filter((b) => b.id === acct.bankId)
+        .map((b) => ({ label: b.name, value: b.id })) ?? []);
 
   const {
     data: mf,
@@ -94,15 +89,29 @@ export default function AcctForm({
 
   useEffect(() => {
     if (mf?.schemeName) setValue("name", mf.schemeName);
-    if (mf?.nav) setValue("nav", mf.nav);
+    if (mf?.nav) {
+      setValue("nav", mf.nav);
+      if (formData?.units) setValue("value", mf.nav * formData.units);
+    }
     if (mfError) setError("num", { message: "Could not get MF details" });
-  }, [mf?.nav, mf?.schemeName, mfError, setValue, setError]);
+  }, [mf?.nav, mf?.schemeName, formData?.units, mfError, setValue, setError]);
 
   useEffect(() => {
     if (equity?.stockName) setValue("name", equity.stockName);
-    if (equity?.price) setValue("currPrice", equity.price);
+    if (equity?.price) {
+      setValue("currPrice", equity.price);
+      if (formData?.quantity)
+        setValue("value", equity.price * formData.quantity);
+    }
     if (eqError) setError("num", { message: "Could not get Equity details" });
-  }, [equity?.price, equity?.stockName, eqError, setValue, setError]);
+  }, [
+    equity?.price,
+    equity?.stockName,
+    formData?.quantity,
+    eqError,
+    setValue,
+    setError,
+  ]);
 
   const utils = api.useUtils();
   const createAccount = api.bankAccounts.create.useMutation({
@@ -121,18 +130,38 @@ export default function AcctForm({
     },
   });
 
+  const updateAccount = api.bankAccounts.update.useMutation({
+    onSuccess: async () => {
+      await utils.bankAccounts.invalidate();
+      await utils.users.invalidate();
+      toast.success("Success", {
+        description: "Account Updated Successfully!",
+      });
+      closeModal(modalId);
+      router.replace(`/accounts/${formData.type}`);
+    },
+    onError: ({ message }) => {
+      console.error(message);
+      toast.error("Error", { description: "Failed to update account." });
+    },
+  });
+
   async function onSubmit(values: z.infer<typeof acctInsertFormSchema>) {
-    const res = await createAccount.mutateAsync(values);
+    setFormSubmitting(true);
+    let res;
+    if (acct?.id)
+      res = await updateAccount.mutateAsync({ ...values, id: acct.id });
+    else res = await createAccount.mutateAsync(values);
     if (!res?.id) {
-      toast.error("Failed to create account.");
+      toast.error(`Failed to ${acct?.id ? "update" : "create"} account`);
     }
+    setFormSubmitting(false);
   }
 
   return (
     <Form {...form}>
       <FormErrorArea />
       <form
-        id={modalId}
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full space-y-6 py-8"
       >
@@ -242,11 +271,13 @@ export default function AcctForm({
             <FormInput<z.infer<typeof acctInsertFormSchema>>
               name="name"
               label="Acct Name"
+              disabled={acct?.bank.name === "Cash"}
             />
             <FormInput<z.infer<typeof acctInsertFormSchema>>
               name="num"
               label="Acct Number"
               value={acct_number_format(formData.num)}
+              disabled={acct?.bank.name === "Cash"}
             />
           </>
         )}
@@ -365,6 +396,15 @@ export default function AcctForm({
             label="Use as default account?"
           />
         )}
+
+        <div className="flex w-full justify-end gap-4">
+          <Button
+            type="submit"
+            isLoading={createAccount.isPending || updateAccount.isPending}
+          >
+            Submit
+          </Button>
+        </div>
       </form>
     </Form>
   );

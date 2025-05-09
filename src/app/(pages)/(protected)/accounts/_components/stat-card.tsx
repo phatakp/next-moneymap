@@ -26,7 +26,7 @@ export default function StatCard({ title, value, icon: Icon }: Props) {
       <CardContent className="py-0 pb-4">
         <AmountField>
           <Currency />
-          <Value>{value}</Value>
+          <Value showfull>{value}</Value>
         </AmountField>
       </CardContent>
     </Card>

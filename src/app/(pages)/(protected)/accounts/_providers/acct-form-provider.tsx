@@ -1,13 +1,22 @@
 "use client";
 
-import type { banksSchema } from "@/server/db/schema";
+import type {
+  AccountWithBank,
+  AcctType,
+  banksSchema,
+} from "@/server/db/schema";
 import { api } from "@/trpc/react";
-import React from "react";
+import { skipToken } from "@tanstack/react-query";
+import React, { useState } from "react";
 import type { z } from "zod";
 
 type AcctFormContextProps = {
   banks: z.infer<typeof banksSchema>[] | undefined;
   isBanksLoading: boolean;
+  type?: AcctType;
+  acct?: AccountWithBank;
+  formSubmitting: boolean;
+  setFormSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const AcctFormContext = React.createContext<AcctFormContextProps | undefined>(
@@ -16,14 +25,28 @@ const AcctFormContext = React.createContext<AcctFormContextProps | undefined>(
 
 export default function AcctFormProvider({
   children,
+  type,
+  acct,
 }: {
   children: React.ReactNode;
+  type?: AcctType;
+  acct?: AccountWithBank;
 }) {
-  const { data, isLoading } = api.banks.getAll.useQuery();
+  const [formSubmitting, setFormSubmitting] = useState(false);
+  const { data, isLoading } = api.banks.getAll.useQuery(
+    !!acct ? undefined : skipToken,
+  );
 
   return (
     <AcctFormContext.Provider
-      value={{ banks: data, isBanksLoading: isLoading }}
+      value={{
+        banks: data,
+        isBanksLoading: isLoading,
+        type,
+        acct,
+        formSubmitting,
+        setFormSubmitting,
+      }}
     >
       {children}
     </AcctFormContext.Provider>
