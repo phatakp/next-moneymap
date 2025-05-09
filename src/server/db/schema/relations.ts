@@ -50,7 +50,7 @@ export const equityAccountRelations = relations(equityAccounts, ({ one }) => ({
 }));
 
 //Group Relations
-export const groupRelations = relations(groups, ({ one, many }) => ({
+export const groupRelations = relations(groups, ({ many }) => ({
   groupUsers: many(groupUsers, { relationName: "groupUserList" }),
   transactions: many(transactions, { relationName: "groupTransactions" }),
 }));

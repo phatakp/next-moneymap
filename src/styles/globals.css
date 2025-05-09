@@ -9,6 +9,7 @@
 }
 
 @plugin "@tailwindcss/typography";
+@plugin "tailwindcss-motion";
 
 @theme {
   --font-sans:

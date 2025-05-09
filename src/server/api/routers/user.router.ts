@@ -55,7 +55,7 @@ export const userRouter = createTRPCRouter({
 
       await tx
         .insert(groupUsers)
-        .values({ groupId: grp?.id!, userId: ctx.user.id });
+        .values({ groupId: grp?.id, userId: ctx.user.id });
 
       return user;
     });

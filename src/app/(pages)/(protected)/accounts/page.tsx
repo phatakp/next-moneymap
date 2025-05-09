@@ -1,7 +1,14 @@
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ACCT_TYPES } from "@/lib/constants";
 import { api } from "@/trpc/server";
-import { HandCoinsIcon, LandmarkIcon, PiggyBankIcon } from "lucide-react";
+import {
+  HandCoinsIcon,
+  LandmarkIcon,
+  PiggyBankIcon,
+  PlusCircle,
+} from "lucide-react";
+import AcctModal from "./_components/acct-modal";
 import StatCard from "./_components/stat-card";
 import StatLink from "./_components/stat-link";
 
@@ -119,7 +126,13 @@ export default async function AccountsPage() {
           </CardContent>
         </Card>
       </div>
-      <div>Recent Transactions</div>
+      <div className="flex flex-col gap-4">
+        <AcctModal id={`add-acct-new`}>
+          <Button className="w-full">
+            <PlusCircle /> New <span>Account</span>
+          </Button>
+        </AcctModal>
+      </div>
     </div>
   );
 }

@@ -37,13 +37,13 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   return result;
 });
 
-const authMiddleware = t.middleware(async ({ next, path }) => {
+const authMiddleware = t.middleware(async ({ next }) => {
   const { userId } = await auth();
   if (!userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   const user = await currentUser();
-  if (!user || !user.id) {
+  if (!user?.id) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   const result = await next({ ctx: { user } });

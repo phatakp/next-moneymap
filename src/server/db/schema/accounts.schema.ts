@@ -18,7 +18,7 @@ import {
   createUpdateSchema,
 } from "drizzle-zod";
 import { z } from "zod";
-import { acctTypeSchema, banks, banksSchema } from "./banks.schema";
+import { type acctTypeSchema, banks, type banksSchema } from "./banks.schema";
 import { users } from "./users.schema";
 
 export const invTypeEnum = pgEnum("inv_type_enum", INV_TYPES);
@@ -222,4 +222,22 @@ export type AccountWithBank = z.infer<typeof accountsSchema> & {
   bank: z.infer<typeof banksSchema>;
   mf?: z.infer<typeof mfAccountsSchema>;
   equity?: z.infer<typeof equityAccountsSchema>;
+};
+export type MFAPIData = {
+  meta: {
+    fund_house: string;
+    scheme_type: string;
+    scheme_category: string;
+    scheme_code: number;
+    scheme_name: string;
+    isin_growth: string;
+    isin_div_reinvestment: string;
+  };
+  data: [
+    {
+      date: string;
+      nav: string;
+    },
+  ];
+  status: string;
 };

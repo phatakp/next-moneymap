@@ -72,8 +72,8 @@ export default async function AccountsTypePage({
               You have {accounts.length} accounts
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-col gap-2">
+          <CardContent className="p-0">
+            <div className="flex w-full flex-col gap-4">
               {accounts.map((acct) => (
                 <AcctModal
                   key={acct.id}
@@ -81,21 +81,21 @@ export default async function AccountsTypePage({
                   type={type as AcctType}
                   acct={acct}
                 >
-                  <div className="flex items-center justify-between space-y-4">
-                    <div className="flex items-center gap-4">
-                      <BankLogo
-                        src={`/bank-logos/${acct.bank.name.toLowerCase()}.png`}
-                      />
-                      <div className="flex flex-col items-start justify-baseline truncate overflow-clip">
-                        <span>{acct.name}</span>
-                        <span className="text-muted-foreground text-sm">
+                  <div className="group hover:motion-preset-rebound-up hover:bg-primary hover:text-primary-foreground grid cursor-pointer grid-cols-6 items-center px-4 py-2 md:grid-cols-12">
+                    <BankLogo
+                      src={`/bank-logos/${acct.bank.name.toLowerCase()}.png`}
+                    />
+                    <div className="col-span-4 flex w-full items-center gap-4 truncate overflow-clip md:col-span-10">
+                      <div className="flex flex-col items-start">
+                        <span className="truncate text-lg">{acct.name}</span>
+                        <span className="text-muted-foreground group-hover:text-muted text-sm">
                           {masked_acct(acct.num)}
                         </span>
                       </div>
                     </div>
-                    <AmountField>
+                    <AmountField className="justify-end">
                       <RupeeIcon />
-                      <Value className="text-xl">{acct.value}</Value>
+                      <Value className="text-right text-xl">{acct.value}</Value>
                     </AmountField>
                   </div>
                 </AcctModal>

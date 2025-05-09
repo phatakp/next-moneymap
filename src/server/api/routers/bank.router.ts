@@ -14,7 +14,7 @@ export const bankRouter = createTRPCRouter({
 
   getAll: publicProcedure.query(async ({ ctx }) => {
     const banks = await ctx.db.query.banks.findMany({
-      orderBy: (banks, { asc }) => [asc(banks.type)],
+      orderBy: (banks, { asc }) => [asc(banks.type), asc(banks.name)],
     });
 
     return banks;

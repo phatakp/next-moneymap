@@ -2,7 +2,7 @@ import { type NeonQueryFunction, neon } from "@neondatabase/serverless";
 import "dotenv/config";
 import {
   drizzle as NeonDrizzle,
-  NeonHttpDatabase,
+  type NeonHttpDatabase,
 } from "drizzle-orm/neon-http";
 
 import { env } from "@/env";

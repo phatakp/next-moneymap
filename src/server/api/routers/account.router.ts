@@ -10,6 +10,7 @@ import {
   mfAccounts,
   mfAccountsInsertSchema,
   type AccountWithBank,
+  type MFAPIData,
 } from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
 import { and, eq, sql } from "drizzle-orm";
@@ -171,7 +172,7 @@ export const bankAccountRouter = createTRPCRouter({
         } as HeadersInit,
         next: { revalidate: 3600 }, // Revalidate every 60*60 seconds
       });
-      const d = await resp.json();
+      const d = (await resp.json()) as MFAPIData;
 
       if (resp.ok && resp.status === 200)
         return {

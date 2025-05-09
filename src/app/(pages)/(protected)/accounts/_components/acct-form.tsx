@@ -35,7 +35,7 @@ export default function AcctForm({
   type?: AcctType;
   acct?: AccountWithBank;
 }) {
-  const { banks } = useAcctFormContext();
+  const { banks, isBanksLoading } = useAcctFormContext();
   const router = useRouter();
   const { modalId, closeModal } = useModal();
 
@@ -61,6 +61,7 @@ export default function AcctForm({
       prefix: acct?.equity?.prefix ?? "",
     },
   });
+  const { setValue, setError } = form;
   const formData = form.watch();
 
   const bankOptions =
@@ -92,30 +93,32 @@ export default function AcctForm({
   );
 
   useEffect(() => {
-    if (mf?.schemeName) form.setValue("name", mf.schemeName);
-    if (mf?.nav) form.setValue("nav", mf.nav);
-    if (mfError) form.setError("num", { message: "Could not get MF details" });
-  }, [mf?.nav, mfError]);
+    if (mf?.schemeName) setValue("name", mf.schemeName);
+    if (mf?.nav) setValue("nav", mf.nav);
+    if (mfError) setError("num", { message: "Could not get MF details" });
+  }, [mf?.nav, mf?.schemeName, mfError, setValue, setError]);
 
   useEffect(() => {
-    if (equity?.stockName) form.setValue("name", equity.stockName);
-    if (equity?.price) form.setValue("currPrice", equity.price);
-    if (eqError)
-      form.setError("num", { message: "Could not get Equity details" });
-  }, [equity?.price, eqError]);
+    if (equity?.stockName) setValue("name", equity.stockName);
+    if (equity?.price) setValue("currPrice", equity.price);
+    if (eqError) setError("num", { message: "Could not get Equity details" });
+  }, [equity?.price, equity?.stockName, eqError, setValue, setError]);
 
   const utils = api.useUtils();
   const createAccount = api.bankAccounts.create.useMutation({
     onSuccess: async () => {
       await utils.bankAccounts.invalidate();
       await utils.users.invalidate();
-      toast("Success", {
+      toast.success("Success", {
         description: "Account Added Successfully!",
       });
       closeModal(modalId);
       router.replace(`/accounts/${formData.type}`);
     },
-    onError: () => toast.error("Failed to add account."),
+    onError: ({ message }) => {
+      console.error(message);
+      toast.error("Error", { description: "Failed to add account." });
+    },
   });
 
   async function onSubmit(values: z.infer<typeof acctInsertFormSchema>) {
@@ -158,12 +161,16 @@ export default function AcctForm({
               })
             }
           />
-          <FormSelect<z.infer<typeof acctInsertFormSchema>>
-            name="bankId"
-            label={"Bank"}
-            options={bankOptions}
-            disabled={!!acct?.id}
-          />
+          {isBanksLoading ? (
+            <Skeleton className="h-12 w-full" />
+          ) : (
+            <FormSelect<z.infer<typeof acctInsertFormSchema>>
+              name="bankId"
+              label={"Bank"}
+              options={bankOptions}
+              disabled={!!acct?.id}
+            />
+          )}
         </div>
 
         {formData.type === "Investment" && (
