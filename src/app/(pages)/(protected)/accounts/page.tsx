@@ -1,14 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ACCT_TYPES } from "@/lib/constants";
 import { api } from "@/trpc/server";
-import {
-  HandCoinsIcon,
-  LandmarkIcon,
-  PiggyBankIcon,
-  PlusCircle,
-} from "lucide-react";
-import AcctModal from "./_components/acct-modal";
+import { HandCoinsIcon, LandmarkIcon, PiggyBankIcon } from "lucide-react";
 import StatCard from "./_components/stat-card";
 import StatLink from "./_components/stat-link";
 
@@ -48,9 +41,9 @@ export default async function AccountsPage() {
     .filter((s) => s.name === "EPF")
     .reduce((acc, b) => acc + b.totValue, 0);
   return (
-    <div className="grid w-full gap-4 md:grid-cols-4">
-      <div className="flex flex-col gap-4 md:col-span-3">
-        <div className="flex w-full flex-wrap items-center justify-between gap-4">
+    <div className="grid w-full gap-4 lg:grid-cols-4">
+      <div className="flex flex-col gap-4 lg:col-span-3">
+        <div className="grid w-full items-center gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard title="Liquid" value={liquid} icon={HandCoinsIcon} />
           <StatCard
             title="Liabilities"
@@ -62,13 +55,19 @@ export default async function AccountsPage() {
             value={inv_retirals}
             icon={PiggyBankIcon}
           />
+          <StatCard empty />
+          {/* <AcctModal id={`add-acct-new`}>
+            <Button className="w-full">
+              <PlusCircle /> New <span>Account</span>
+            </Button>
+          </AcctModal> */}
         </div>
         <Card>
           <CardHeader>
             <CardTitle>Your Balances</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col gap-4">
+            <div className="grid gap-4 md:grid-cols-2 md:gap-6 xl:grid-cols-3">
               {ACCT_TYPES.filter(
                 (t) => !["Retirals", "Investment"].includes(t),
               ).map((t) => {
@@ -126,13 +125,7 @@ export default async function AccountsPage() {
           </CardContent>
         </Card>
       </div>
-      <div className="flex flex-col gap-4">
-        <AcctModal id={`add-acct-new`}>
-          <Button className="w-full">
-            <PlusCircle /> New <span>Account</span>
-          </Button>
-        </AcctModal>
-      </div>
+      <div className="flex flex-col gap-4"></div>
     </div>
   );
 }

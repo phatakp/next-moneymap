@@ -22,7 +22,7 @@ export default async function BankLogo({
   const blurDataURL = `data:image/png;base64,${base64}`;
 
   return (
-    <div className="bg-primary flex size-10 items-center justify-center rounded-full">
+    <div className="bg-foreground flex size-10 items-center justify-center rounded-full">
       <Image
         alt="bank-logo"
         sizes="100%"

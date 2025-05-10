@@ -18,7 +18,7 @@ export default function AcctModal({ id, acct, type, children }: Props) {
   return (
     <AcctFormProvider type={type} acct={acct}>
       <Modal id={id}>
-        <ModalTrigger>{children}</ModalTrigger>
+        <ModalTrigger className="w-full">{children}</ModalTrigger>
         <ModalBody>
           <ModalContent>
             <div className="flex flex-col gap-2 text-center sm:text-left">

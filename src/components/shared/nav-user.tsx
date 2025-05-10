@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/sidebar";
 import { api } from "@/trpc/react";
 import { SignOutButton } from "@clerk/nextjs";
+import { Card, CardContent } from "../ui/card";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -38,22 +39,26 @@ export function NavUser() {
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground bg-primary-gradient"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage
-                  src={user?.image ?? "https://github.com/shadcn.png"}
-                  alt={user?.firstName}
-                />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
-              </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {user?.firstName} {user?.lastName}
-                </span>
-                <span className="truncate text-xs">{user?.email}</span>
-              </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <Card className="w-full overflow-hidden bg-transparent">
+                <CardContent className="flex items-center gap-2 px-0 py-2">
+                  <Avatar className="h-8 w-8 rounded-lg">
+                    <AvatarImage
+                      src={user?.image ?? "https://github.com/shadcn.png"}
+                      alt={user?.firstName}
+                    />
+                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">
+                      {user?.firstName} {user?.lastName}
+                    </span>
+                    <span className="truncate text-xs">{user?.email}</span>
+                  </div>
+                  <ChevronsUpDown className="ml-auto size-4" />
+                </CardContent>
+              </Card>
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

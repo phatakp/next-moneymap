@@ -20,22 +20,18 @@ export default function StatLink({ title, href, value, percent }: Props) {
     <Link
       href={href}
       className={cn(
-        // buttonVariants({ variant: "link" }),
-        "group flex w-full items-center justify-between rounded-none border-b p-2 transition-all duration-500 ease-in-out",
+        "group hover:motion-bg-in-primary hover:shadow-primary md:shadow-input relative flex flex-row items-center justify-between rounded-none border-b py-2 transition-all duration-500 ease-in-out hover:shadow md:flex-col md:items-start md:gap-2 md:rounded-lg md:border-t md:px-2 md:shadow-md lg:px-4",
       )}
     >
-      <div className="flex items-center gap-2">
-        <div className="bg-primary flex size-6 items-center justify-center rounded-full">
+      <div className="flex w-full items-center gap-2 md:flex-row-reverse md:justify-between">
+        <div className="bg-primary-gradient flex size-6 items-center justify-center rounded-full">
           <Icon name={title} className="text-primary-foreground size-4" />
         </div>
         <div className="flex flex-col">
-          <span className="text-lg">{title}</span>
-          <span className="text-muted-foreground text-sm">
-            {(percent * 100).toFixed(1)}% of allocation
-          </span>
+          <span className="md:title md:text-lg">{title}</span>
         </div>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center md:w-full md:justify-between md:gap-2">
         <AmountField>
           <RupeeIcon />
           <Value className="text-xl">{value}</Value>

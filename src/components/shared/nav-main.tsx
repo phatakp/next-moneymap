@@ -24,7 +24,7 @@ import { capitalize, cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export function NavMain() {
+export function NavMain({ onClick }: { onClick: () => void }) {
   const pathname = usePathname();
   const items = NAV_LINKS.map((link) => {
     const url = `/${link}`;
@@ -58,14 +58,18 @@ export function NavMain() {
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
+                onClick={onClick}
                 tooltip={capitalize(item.title)}
                 className={cn(
-                  item.isActive && "bg-primary text-primary-foreground",
+                  item.isActive &&
+                    "bg-primary-gradient text-primary-foreground",
                 )}
               >
                 <Link href={item.url}>
                   <Icon name={item.title} className="size-6" />
-                  <span className="text-lg capitalize">{item.title}</span>
+                  <span className="text-xl capitalize md:text-lg">
+                    {item.title}
+                  </span>
                 </Link>
               </SidebarMenuButton>
               {item.items?.length ? (
@@ -82,13 +86,17 @@ export function NavMain() {
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton
                             asChild
+                            onClick={onClick}
                             className={cn(
+                              "py-4",
                               subItem.isActive &&
-                                "bg-primary text-primary-foreground",
+                                "bg-primary-gradient text-primary-foreground",
                             )}
                           >
                             <Link href={subItem.url}>
-                              <span className="text-base">{subItem.title}</span>
+                              <span className="text-lg md:text-base">
+                                {subItem.title}
+                              </span>
                             </Link>
                           </SidebarMenuSubButton>
                         </SidebarMenuSubItem>
