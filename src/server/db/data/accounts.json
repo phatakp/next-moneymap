@@ -1,101 +1,170 @@
 [
     {
+        "bank": "ICICI",
         "num": "033601510819",
         "name": "ICICI Savings",
-        "balance": 144134.26,
-        "value": 144134.26,
-        "bank": "ICICI",
         "type": "Savings",
-        "asOfDate": "2025-05-05"
+        "balance": 106953.83,
+        "value": 106953.83,
+        "asOfDate": "2024-06-21"
     },
     {
+        "bank": "ICICI",
         "num": "5241931076509011",
         "name": "ICICI Coral",
-        "balance": 58302.39,
-        "value": 58302.39,
-        "bank": "ICICI",
         "type": "Credit-Card",
-        "asOfDate": "2025-05-05"
+        "balance": 39999.0,
+        "value": 39999.0,
+        "asOfDate": "2024-06-21"
     },
     {
+        "bank": "HDFC",
         "num": "50100211943798",
         "name": "HDFC Salary",
-        "balance": 1012546.17,
-        "value": 1012546.17,
-        "bank": "HDFC",
         "type": "Savings",
-        "asOfDate": "2025-05-05"
+        "balance": 550769.88,
+        "value": 550769.88,
+        "asOfDate": "2024-06-21"
     },
     {
+        "bank": "HDFC",
         "num": "50100656393311",
         "name": "HDFC Prayaan",
-        "balance": 29590,
-        "value": 29590,
-        "bank": "HDFC",
         "type": "Savings",
-        "asOfDate": "2025-05-05"
+        "balance": 25763,
+        "value": 25763,
+        "asOfDate": "2024-06-21"
     },
     {
-        "num": "552260**1565",
+        "bank": "HDFC",
+        "num": "5522605004621565",
         "name": "HDFC Regalia",
-        "balance": 26027.16,
-        "value": 26027.16,
-        "bank": "HDFC",
         "type": "Credit-Card",
-        "asOfDate": "2025-05-05"
+        "balance": 9469.74,
+        "value": 9469.74,
+        "asOfDate": "2024-06-21"
     },
     {
+        "bank": "SBI",
         "num": "20223804986",
-        "name": "SBI Savings",
-        "balance": 144018.77,
-        "value": 144018.77,
-        "bank": "SBI",
+        "name": "SBI Hinjewadi",
         "type": "Savings",
-        "asOfDate": "2025-05-05"
+        "balance": 204851.77,
+        "value": 204851.77,
+        "asOfDate": "2024-06-21"
     },
     {
-        "num": "4372715418",
-        "name": "SBI Home Loan",
-        "balance": 1740861,
-        "value": 1740861,
-        "bank": "SBI",
-        "type": "Mortgage",
-        "asOfDate": "2025-05-05"
-    },
-    {
-        "num": "**9316",
-        "name": "SBI Rupay",
-        "balance": 12157.43,
-        "value": 12157.43,
-        "bank": "SBI",
+        "bank": "CITI",
+        "num": "4386280524921909",
+        "name": "CITI Indian Oil",
         "type": "Credit-Card",
-        "asOfDate": "2025-05-05"
+        "balance": 2790,
+        "value": 2790,
+        "asOfDate": "2024-06-21"
     },
     {
-        "num": "110145861957",
-        "name": "NPS",
-        "balance": 413416.26,
-        "value": 512834.71,
-        "bank": "NPS",
-        "type": "Retirals",
-        "asOfDate": "2025-05-05"
+        "bank": "Sodexo",
+        "num": "6375130837688042",
+        "name": "Pluxee Salary",
+        "type": "Wallet",
+        "balance": 1226.05,
+        "value": 1226.05,
+        "asOfDate": "2024-06-21"
     },
     {
-        "num": "100960632625",
-        "name": "Provident Fund",
-        "balance": 2800243,
-        "value": 2800243,
-        "bank": "EPF",
-        "type": "Retirals",
-        "asOfDate": "2025-03-31"
+        "bank": "FundsIndia",
+        "num": "112323",
+        "name": "",
+        "type": "Investment",
+        "balance": 469975,
+        "value": 0,
+        "asOfDate": "2024-06-20",
+        "invType": "Mutual-Fund",
+        "isSip": true,
+        "units": 7055.678
     },
     {
-        "num": "**3046",
-        "name": "SBM Savings",
-        "balance": 6081.18,
-        "value": 6081.18,
-        "bank": "SBM",
-        "type": "Savings",
-        "asOfDate": "2025-05-05"
+        "bank": "FundsIndia",
+        "num": "149157",
+        "name": "",
+        "type": "Investment",
+        "balance": 150000,
+        "value": 0,
+        "asOfDate": "2024-06-20",
+        "invType": "Mutual-Fund",
+        "isSip": true,
+        "units": 14358.546
+    },
+    {
+        "bank": "FundsIndia",
+        "num": "145551",
+        "name": "",
+        "type": "Investment",
+        "balance": 123000,
+        "value": 0,
+        "asOfDate": "2024-06-20",
+        "invType": "Mutual-Fund",
+        "isSip": true,
+        "units": 5510.628
+    },
+    {
+        "bank": "FundsIndia",
+        "num": "103504",
+        "name": "",
+        "type": "Investment",
+        "balance": 48000,
+        "value": 0,
+        "asOfDate": "2024-06-20",
+        "invType": "Mutual-Fund",
+        "isSip": false,
+        "units": 739.959
+    },
+    {
+        "bank": "FundsIndia",
+        "num": "143260",
+        "name": "",
+        "type": "Investment",
+        "balance": 342143,
+        "value": 0,
+        "asOfDate": "2024-06-20",
+        "invType": "Mutual-Fund",
+        "isSip": false,
+        "units": 256.833
+    },
+    {
+        "bank": "FundsIndia",
+        "num": "122640",
+        "name": "",
+        "type": "Investment",
+        "balance": 342143,
+        "value": 0,
+        "asOfDate": "2024-06-20",
+        "invType": "Mutual-Fund",
+        "isSip": false,
+        "units": 249.591
+    },
+    {
+        "bank": "FundsIndia",
+        "num": "101349",
+        "name": "",
+        "type": "Investment",
+        "balance": 43250,
+        "value": 0,
+        "asOfDate": "2024-06-20",
+        "invType": "Mutual-Fund",
+        "isSip": true,
+        "units": 226.951
+    },
+    {
+        "bank": "FundsIndia",
+        "num": "112957",
+        "name": "",
+        "type": "Investment",
+        "balance": 43250,
+        "value": 0,
+        "asOfDate": "2024-06-20",
+        "invType": "Mutual-Fund",
+        "isSip": true,
+        "units": 1069.812
     }
 ]

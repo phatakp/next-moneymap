@@ -9,6 +9,7 @@ import {
   pgTable,
   real,
   text,
+  uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -43,7 +44,14 @@ export const bankAccounts = pgTable(
     isAsset: boolean("is_asset").default(false),
     isLiquid: boolean("is_liquid").default(false),
   },
-  (accounts) => [check("bal_check", sql`${accounts.balance} >= 0`)],
+  (accounts) => [
+    check("bal_check", sql`${accounts.balance} >= 0`),
+    uniqueIndex("bankAccount_unique_idx").on(
+      accounts.userId,
+      accounts.bankId,
+      accounts.num,
+    ),
+  ],
 );
 
 export const mfAccounts = pgTable("mf_accounts", {
@@ -218,6 +226,7 @@ export const acctInsertFormSchema = accountsInsertSchema
 
 //types
 export type AcctType = z.infer<typeof acctTypeSchema>["type"];
+export type InvType = z.infer<typeof invTypeSchema>["invType"];
 export type AccountWithBank = z.infer<typeof accountsSchema> & {
   bank: z.infer<typeof banksSchema>;
   mf?: z.infer<typeof mfAccountsSchema>;

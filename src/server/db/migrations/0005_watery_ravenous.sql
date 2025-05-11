@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "bankAccount_unique_idx" ON "bank_accounts" USING btree ("user_id","bank_id","num");
