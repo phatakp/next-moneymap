@@ -42,7 +42,7 @@ async function loadAccounts() {
     );
     if (!bank) throw new Error(`Could not find bank for ${d.type}-${d.bank}`);
 
-    let data = {
+    const data = {
       num: d.num,
       name: d.name,
       bankId: bank.id,
@@ -59,7 +59,7 @@ async function loadAccounts() {
       console.log({ acct });
       if (!!acct?.id && acct.invType === "Mutual-Fund") {
         const mfData: z.infer<typeof mfAccountsInsertSchema> = {
-          id: acct?.id!,
+          id: acct?.id,
           units: d.units!,
           isSip: !!d.isSip,
           nav: 0,
