@@ -26,8 +26,9 @@ import {
   CommandItem,
   CommandList,
 } from "../ui/command";
+import { Skeleton } from "../ui/skeleton";
 
-type SelectOption = {
+export type SelectOption = {
   label: string;
   value: any;
 };
@@ -68,22 +69,27 @@ export function FormSelect<T>({
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <FormControl>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    isLoading={isLoading}
-                    disabled={disabled}
-                    className={cn(
-                      "bg-input/30 h-12 w-full justify-between",
-                      !field.value && "text-muted-foreground",
-                      isError && "ring-destructive border-destructive",
-                    )}
-                  >
-                    {field.value
-                      ? options.find((opt) => opt.value === field.value)?.label
-                      : `Select ${label}...`}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
+                  {isLoading ? (
+                    <Skeleton className="h-12 w-full" />
+                  ) : (
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      isLoading={isLoading}
+                      disabled={disabled}
+                      className={cn(
+                        "bg-input/30 h-12 w-full justify-between",
+                        !field.value && "text-muted-foreground",
+                        isError && "ring-destructive border-destructive",
+                      )}
+                    >
+                      {field.value
+                        ? options.find((opt) => opt.value === field.value)
+                            ?.label
+                        : `Select ${label}...`}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  )}
                 </FormControl>
               </PopoverTrigger>
               <PopoverContent className="w-full p-0">

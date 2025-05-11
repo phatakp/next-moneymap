@@ -53,9 +53,15 @@ export const userRouter = createTRPCRouter({
         })
         .returning();
 
+      if (!grp?.id)
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Could not create Personal Group",
+        });
+
       await tx
         .insert(groupUsers)
-        .values({ groupId: grp?.id, userId: ctx.user.id });
+        .values({ groupId: grp.id, userId: ctx.user.id });
 
       return user;
     });

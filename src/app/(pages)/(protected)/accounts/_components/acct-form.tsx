@@ -26,8 +26,7 @@ const typeOptions = ACCT_TYPES.map((t) => ({ label: t, value: t }));
 const invOptions = INV_TYPES.map((t) => ({ label: t, value: t }));
 
 export default function AcctForm() {
-  const { banks, isBanksLoading, type, acct, setFormSubmitting } =
-    useAcctFormContext();
+  const { banks, isBanksLoading, type, acct } = useAcctFormContext();
   const router = useRouter();
   const { modalId, closeModal } = useModal();
 
@@ -147,7 +146,6 @@ export default function AcctForm() {
   });
 
   async function onSubmit(values: z.infer<typeof acctInsertFormSchema>) {
-    setFormSubmitting(true);
     let res;
     if (acct?.id)
       res = await updateAccount.mutateAsync({ ...values, id: acct.id });
@@ -155,7 +153,6 @@ export default function AcctForm() {
     if (!res?.id) {
       toast.error(`Failed to ${acct?.id ? "update" : "create"} account`);
     }
-    setFormSubmitting(false);
   }
 
   return (

@@ -12,19 +12,15 @@ import {
   CardAction,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { masked_acct } from "@/lib/utils";
 import type { AcctType } from "@/server/db/schema";
 import { api } from "@/trpc/server";
 import { ArrowDownLeft, ArrowUpRight, PlusCircle } from "lucide-react";
+import TxnModal from "../../transactions/_components/txn-modal";
 import AcctModal from "../_components/acct-modal";
 
 export default async function AccountsTypePage({
@@ -55,29 +51,27 @@ export default async function AccountsTypePage({
                 {total}
               </Value>
             </AmountField>
-            <div className="my-4 flex items-center gap-4">
+            <div className="my-4 flex items-center justify-between gap-4">
               <AcctModal id={`add-acct-new`} type={type as AcctType}>
                 <Button>
                   <PlusCircle />
                   <span className="hidden sm:flex">New Account</span>
                 </Button>
               </AcctModal>
-              <Button variant={"destructive"}>
-                <span className="hidden sm:flex">Expense</span> <ArrowUpRight />
-              </Button>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant={"success"}>
-                      <span className="hidden sm:flex">Receive</span>{" "}
-                      <ArrowDownLeft />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Add Income</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <div className="flex items-center gap-4">
+                <TxnModal id={`add-txn-new`}>
+                  <Button variant={"destructive"}>
+                    <span className="hidden sm:flex">Expense</span>{" "}
+                    <ArrowUpRight />
+                  </Button>
+                </TxnModal>
+                <TxnModal id={`add-txn-new`} isIncome>
+                  <Button variant={"success"}>
+                    <span className="hidden sm:flex">Receive</span>{" "}
+                    <ArrowDownLeft />
+                  </Button>
+                </TxnModal>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -120,6 +114,13 @@ export default async function AccountsTypePage({
               ))}
             </div>
           </CardContent>
+          <CardFooter>
+            <TxnModal id={`add-txn-new`}>
+              <Button>
+                <span className="hidden sm:flex">Expense</span> <ArrowUpRight />
+              </Button>
+            </TxnModal>
+          </CardFooter>
         </Card>
       </div>
     </div>

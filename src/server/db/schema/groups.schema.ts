@@ -1,10 +1,11 @@
-import { pgTable, text, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { pgTable, primaryKey, text, uuid, varchar } from "drizzle-orm/pg-core";
 import {
   createInsertSchema,
   createSelectSchema,
   createUpdateSchema,
 } from "drizzle-zod";
-import { users } from "./users.schema";
+import type { z } from "zod";
+import { users, usersSchema } from "./users.schema";
 
 export const groups = pgTable("groups", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -14,17 +15,15 @@ export const groups = pgTable("groups", {
 export const groupUsers = pgTable(
   "group_users",
   {
-    id: uuid("id").primaryKey().defaultRandom(),
-    groupId: uuid("group_id").references(() => groups.id),
+    groupId: uuid("group_id")
+      .references(() => groups.id)
+      .notNull(),
     userId: text("user_id")
       .references(() => users.id)
       .notNull(),
   },
   (groupUsers) => [
-    uniqueIndex("grp_users_unique_idx").on(
-      groupUsers.groupId,
-      groupUsers.userId,
-    ),
+    primaryKey({ columns: [groupUsers.groupId, groupUsers.userId] }),
   ],
 );
 
@@ -39,3 +38,10 @@ export const groupUsersUpdateSchema = createUpdateSchema(groupUsers);
 
 //form schemas
 export const groupIdSchema = groupsSchema.pick({ id: true });
+
+//type
+export type GroupWithUsers = z.infer<typeof groupsSchema> & {
+  groupUsers: (z.infer<typeof groupUsersSchema> & {
+    users: z.infer<typeof usersSchema>;
+  })[];
+};

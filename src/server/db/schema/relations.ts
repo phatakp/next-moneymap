@@ -8,7 +8,7 @@ import { users } from "./users.schema";
 //User Relations
 export const userRelations = relations(users, ({ many }) => ({
   accounts: many(bankAccounts, { relationName: "userAccounts" }),
-  groups: many(groupUsers, { relationName: "groupUsersList" }),
+  groupUsers: many(groupUsers),
 }));
 
 //Bank Relations
@@ -51,7 +51,7 @@ export const equityAccountRelations = relations(equityAccounts, ({ one }) => ({
 
 //Group Relations
 export const groupRelations = relations(groups, ({ many }) => ({
-  groupUsers: many(groupUsers, { relationName: "groupUserList" }),
+  groupUsers: many(groupUsers),
   transactions: many(transactions, { relationName: "groupTransactions" }),
 }));
 
@@ -60,9 +60,11 @@ export const groupUsersRelations = relations(groupUsers, ({ one, many }) => ({
   group: one(groups, {
     fields: [groupUsers.groupId],
     references: [groups.id],
-    relationName: "groupUserList",
   }),
-  users: many(users, { relationName: "groupUsersList" }),
+  users: one(users, {
+    fields: [groupUsers.userId],
+    references: [users.id],
+  }),
 }));
 
 //Transactions Relations

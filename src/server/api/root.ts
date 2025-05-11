@@ -1,5 +1,7 @@
 import { bankAccountRouter } from "@/server/api/routers/account.router";
 import { bankRouter } from "@/server/api/routers/bank.router";
+import { groupRouter } from "@/server/api/routers/group.router";
+import { txnRouter } from "@/server/api/routers/txn.router";
 import { userRouter } from "@/server/api/routers/user.router";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 
@@ -11,7 +13,9 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 export const appRouter = createTRPCRouter({
   users: userRouter,
   banks: bankRouter,
+  transactions: txnRouter,
   bankAccounts: bankAccountRouter,
+  groups: groupRouter,
 });
 
 // export type definition of API

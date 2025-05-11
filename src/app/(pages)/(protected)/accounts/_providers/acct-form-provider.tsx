@@ -7,7 +7,7 @@ import type {
 } from "@/server/db/schema";
 import { api } from "@/trpc/react";
 import { skipToken } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React from "react";
 import type { z } from "zod";
 
 type AcctFormContextProps = {
@@ -15,8 +15,6 @@ type AcctFormContextProps = {
   isBanksLoading: boolean;
   type?: AcctType;
   acct?: AccountWithBank;
-  formSubmitting: boolean;
-  setFormSubmitting: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const AcctFormContext = React.createContext<AcctFormContextProps | undefined>(
@@ -32,7 +30,6 @@ export default function AcctFormProvider({
   type?: AcctType;
   acct?: AccountWithBank;
 }) {
-  const [formSubmitting, setFormSubmitting] = useState(false);
   const { data, isLoading } = api.banks.getAll.useQuery(
     !!acct ? undefined : skipToken,
   );
@@ -44,8 +41,6 @@ export default function AcctFormProvider({
         isBanksLoading: isLoading,
         type,
         acct,
-        formSubmitting,
-        setFormSubmitting,
       }}
     >
       {children}

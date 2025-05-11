@@ -43,6 +43,20 @@
       "when": 1746951226848,
       "tag": "0005_watery_ravenous",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1746961349238,
+      "tag": "0006_serious_may_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1746979524840,
+      "tag": "0007_fearless_luke_cage",
+      "breakpoints": true
     }
   ]
 }

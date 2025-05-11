@@ -13,7 +13,7 @@ import {
   type MFAPIData,
 } from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import parse from "node-html-parser";
 import { z } from "zod";
 
@@ -236,6 +236,24 @@ export const bankAccountRouter = createTRPCRouter({
       .from(bankAccounts)
       .innerJoin(banks, eq(bankAccounts.bankId, banks.id))
       .where(eq(bankAccounts.userId, ctx.user.id));
+
+    return result.map((r) => ({
+      ...r.bank_accounts,
+      bank: r.banks,
+    })) as AccountWithBank[];
+  }),
+
+  getUserAccountsForTxn: protectedProcedure.query(async ({ ctx }) => {
+    const result = await ctx.db
+      .select()
+      .from(bankAccounts)
+      .innerJoin(banks, eq(bankAccounts.bankId, banks.id))
+      .where(
+        and(
+          eq(bankAccounts.userId, ctx.user.id),
+          inArray(banks.type, ["Savings", "Credit-Card", "Wallet"]),
+        ),
+      );
 
     return result.map((r) => ({
       ...r.bank_accounts,

@@ -9,6 +9,7 @@ export const ACCT_TYPES = [
 ] as const;
 
 export const INV_TYPES = ["Mutual-Fund", "Equity", "Deposit"] as const;
+export const GRP_TXN_TYPES = ["Split", "To-Pay-Full", "To-Get-Full"] as const;
 
 export const CATEGORIES = [
   "Food",

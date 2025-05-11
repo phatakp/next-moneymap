@@ -9,19 +9,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import {
-  useFormContext,
-  type FieldPath,
-  type FieldValues,
-} from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { Label } from "../ui/label";
-
-type FormFieldContextValue<
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = {
-  name: TName;
-};
 
 export function FormInput<T>({
   label,
@@ -31,13 +20,11 @@ export function FormInput<T>({
   type,
   placeholder,
   disabled,
-  debounce = false,
   ...props
 }: React.ComponentProps<"input"> & {
   name: keyof T;
   label: string;
   description?: string;
-  debounce?: boolean;
 }) {
   const {
     control,
