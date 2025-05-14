@@ -1,108 +1,65 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { groupIdSchema, type GroupWithUsers } from "@/server/db/schema";
+import {
+  groupFormSchema,
+  groupIdSchema,
+  groups,
+  groupsSchema,
+  groupUsers,
+  type GroupWithUsers,
+} from "@/server/db/schema";
+import { TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
+import type { z } from "zod";
 
 export const groupRouter = createTRPCRouter({
-  // create: protectedProcedure
-  //   .input(txnFormSchema)
-  //   .mutation(async ({ ctx, input }) => {
-  //     const acct = await api.bankAccounts.getAccountById({ id: input.acctId });
+  create: protectedProcedure
+    .input(groupFormSchema)
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.transaction(async (tx) => {
+        const [grp] = await tx
+          .insert(groups)
+          .values({ name: input.name })
+          .returning();
+        if (!grp)
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Could not add group",
+          });
+        const data = input.users.map((u) => ({ groupId: grp.id, userId: u }));
+        await tx.insert(groupUsers).values(data);
+        return grp;
+      });
+    }),
 
-  //     await ctx.db.transaction(async (tx) => {
-  //       const [txn] = await tx.insert(transactions).values(input).returning();
-  //       if (!txn)
-  //         throw new TRPCError({
-  //           code: "BAD_REQUEST",
-  //           message: "Could not add transaction",
-  //         });
-  //       const amt = txn.isIncome
-  //         ? acct.bank.type === "Credit-Card"
-  //           ? txn.amount * -1
-  //           : txn.amount
-  //         : acct.bank.type === "Credit-Card"
-  //           ? txn.amount
-  //           : txn.amount * -1;
-  //       await tx
-  //         .update(bankAccounts)
-  //         .set({
-  //           balance: sql`${bankAccounts.balance} + ${amt}`,
-  //           value: sql`${bankAccounts.value} + ${amt}`,
-  //         })
-  //         .where(eq(bankAccounts.id, txn?.acctId));
-  //     });
-  //   }),
+  update: protectedProcedure
+    .input(groupFormSchema)
+    .mutation(async ({ ctx, input }) => {
+      if (!input?.id)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Group Id is required",
+        });
 
-  // update: protectedProcedure
-  //   .input(txnFormSchema)
-  //   .mutation(async ({ ctx, input }) => {
-  //     if (!input?.id)
-  //       throw new TRPCError({
-  //         code: "NOT_FOUND",
-  //         message: "ID is required",
-  //       });
+      const { id, name } = input;
+      const grp = await ctx.db.query.groups.findFirst({
+        where: (groups, { eq }) => eq(groups.id, id),
+        with: { groupUsers: true },
+      });
+      if (!grp)
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Group Not found",
+        });
+      await ctx.db.transaction(async (tx) => {
+        if (input.name !== grp.name)
+          await tx.update(groups).set({ name }).where(eq(groups.id, id));
+        await tx.delete(groupUsers).where(eq(groupUsers.groupId, id));
+        const data = input.users.map((u) => ({ groupId: grp.id, userId: u }));
+        await tx.insert(groupUsers).values(data);
+      });
 
-  //     const { id, ...values } = input;
-  //     const txn = await api.transactions.getUserTxnById({ id });
-  //     if (!txn?.id)
-  //       throw new TRPCError({
-  //         code: "NOT_FOUND",
-  //         message: "Transaction not found",
-  //       });
-  //     const acct = await api.bankAccounts.getAccountById({ id: input.acctId });
-
-  //     await ctx.db.transaction(async (tx) => {
-  //       await tx
-  //         .update(transactions)
-  //         .set(values)
-  //         .where(eq(transactions.id, id!));
-
-  //       if (txn.acctId !== input.acctId) {
-  //         const oldAmt = txn.isIncome
-  //           ? txn.account.bank.type === "Credit-Card"
-  //             ? txn.amount
-  //             : txn.amount * -1
-  //           : txn.account.bank.type === "Credit-Card"
-  //             ? txn.amount * -1
-  //             : txn.amount;
-  //         const newAmt = input.isIncome
-  //           ? acct.bank.type === "Credit-Card"
-  //             ? input.amount * -1
-  //             : input.amount
-  //           : acct.bank.type === "Credit-Card"
-  //             ? input.amount
-  //             : input.amount * -1;
-  //         await tx
-  //           .update(bankAccounts)
-  //           .set({
-  //             balance: sql`${bankAccounts.balance} + ${oldAmt}`,
-  //             value: sql`${bankAccounts.value} + ${oldAmt}`,
-  //           })
-  //           .where(eq(bankAccounts.id, txn?.acctId));
-  //         await tx
-  //           .update(bankAccounts)
-  //           .set({
-  //             balance: sql`${bankAccounts.balance} + ${newAmt}`,
-  //             value: sql`${bankAccounts.value} + ${newAmt}`,
-  //           })
-  //           .where(eq(bankAccounts.id, input.acctId));
-  //       } else if (txn.amount !== input.amount) {
-  //         let amt = input.amount;
-  //         amt = txn.isIncome
-  //           ? acct.bank.type === "Credit-Card"
-  //             ? Math.abs(txn.amount - input.amount) * -1
-  //             : Math.abs(txn.amount - input.amount)
-  //           : acct.bank.type === "Credit-Card"
-  //             ? Math.abs(txn.amount - input.amount)
-  //             : Math.abs(txn.amount - input.amount) * -1;
-  //         await tx
-  //           .update(bankAccounts)
-  //           .set({
-  //             balance: sql`${bankAccounts.balance} + ${amt}`,
-  //             value: sql`${bankAccounts.value} + ${amt}`,
-  //           })
-  //           .where(eq(bankAccounts.id, txn?.acctId));
-  //       }
-  //     });
-  //   }),
+      return grp;
+    }),
 
   getUserGroupById: protectedProcedure
     .input(groupIdSchema)
@@ -121,15 +78,15 @@ export const groupRouter = createTRPCRouter({
     }),
 
   getAllUserGroups: protectedProcedure.query(async ({ ctx }) => {
-    const result = await ctx.db.query.groups.findMany({
-      with: {
-        groupUsers: {
-          with: { users: true },
-          where: (groupUsers, { eq }) => eq(groupUsers.userId, ctx.user.id),
-        },
-      },
-    });
-    return result as GroupWithUsers[];
+    const result = await ctx.db
+      .select({ group: groups })
+      .from(groups)
+      .innerJoin(groupUsers, eq(groupUsers.groupId, groups.id))
+      .where(eq(groupUsers.userId, ctx.user.id));
+
+    return result.map((r) => ({ ...r.group })) as z.infer<
+      typeof groupsSchema
+    >[];
   }),
 
   getUserPersonalGroup: protectedProcedure.query(async ({ ctx }) => {

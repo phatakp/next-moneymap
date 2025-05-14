@@ -9,7 +9,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { XCircleIcon } from "lucide-react";
 import { useFormContext } from "react-hook-form";
+import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 
 export function FormInput<T>({
@@ -29,6 +31,7 @@ export function FormInput<T>({
   const {
     control,
     setValue,
+    resetField,
     formState: { errors },
   } = useFormContext();
   const isError = !!errors[name];
@@ -65,6 +68,17 @@ export function FormInput<T>({
                 onChange={field.onChange}
                 {...props}
               />
+              <Button
+                variant={"ghost"}
+                type="button"
+                size={"icon"}
+                className="absolute top-1/2 right-2 z-10 -translate-y-1/2"
+                onClick={() =>
+                  setValue(name, type === "number" ? 0 : ("" as any))
+                }
+              >
+                <XCircleIcon className="" />
+              </Button>
               <Label
                 htmlFor={`${name}-id`}
                 className={cn(

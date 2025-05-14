@@ -10,10 +10,11 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { CATEGORIES, GRP_TXN_TYPES } from "@/lib/constants";
 import { txnFormSchema } from "@/server/db/schema";
+import { api } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import type { z } from "zod";
 import { useTxnFormContext } from "../_providers/txn-form-provider";
 
@@ -32,7 +33,6 @@ export default function TxnForm() {
     setSelectedGroup,
     defAcctId,
   } = useTxnFormContext();
-  const router = useRouter();
   const { modalId, closeModal } = useModal();
 
   const form = useForm<z.infer<typeof txnFormSchema>>({
@@ -47,10 +47,14 @@ export default function TxnForm() {
       isIncome: txn?.isIncome ?? !!isIncome,
       amount: txn?.amount ?? 0,
       category: txn?.category ?? undefined,
-      grpTxnType: txn?.grpTxnType ?? undefined,
+      grpTxnType:
+        (txn?.grpTxnType ??
+        (selectedGroup && selectedGroup?.label !== "Personal"))
+          ? "Split"
+          : undefined,
     },
   });
-  const { setValue, setError } = form;
+  const { setValue } = form;
   const formData = form.watch();
 
   const acctOptions =
@@ -60,13 +64,49 @@ export default function TxnForm() {
   useEffect(() => {
     const selectGrp = grpOptions.find((g) => g.value === formData.groupId);
     setSelectedGroup(selectGrp);
-  }, [formData.groupId]);
+    if (selectGrp?.label === "Personal") setValue("grpTxnType", undefined);
+  }, [formData.groupId, setValue]);
 
-  console.log(formData);
+  const utils = api.useUtils();
+  const createTxn = api.transactions.create.useMutation({
+    onSuccess: async () => {
+      await utils.transactions.invalidate();
+      await utils.bankAccounts.invalidate();
+      toast.success("Success", {
+        description: "Txn Added Successfully!",
+      });
+      closeModal(modalId);
+    },
+    onError: ({ message }) => {
+      console.error(message);
+      toast.error("Error", { description: "Failed to add txn." });
+    },
+  });
+
+  const updateTxn = api.transactions.update.useMutation({
+    onSuccess: async () => {
+      await utils.transactions.invalidate();
+      await utils.bankAccounts.invalidate();
+      toast.success("Success", {
+        description: "Txn Updated Successfully!",
+      });
+      closeModal(modalId);
+    },
+    onError: ({ message }) => {
+      console.error(message);
+      toast.error("Error", { description: "Failed to update txn." });
+    },
+  });
 
   async function onSubmit(values: z.infer<typeof txnFormSchema>) {
-    console.log(values);
+    let res;
+    if (txn?.id) res = await updateTxn.mutateAsync({ ...values, id: txn.id });
+    else res = await createTxn.mutateAsync(values);
+    if (!res?.id) {
+      toast.error(`Failed to ${txn?.id ? "update" : "create"} txn`);
+    }
   }
+
   return (
     <Form {...form}>
       <FormErrorArea />
@@ -96,7 +136,7 @@ export default function TxnForm() {
             disabled={!!formData.isIncome}
           />
 
-          {selectedGroup?.label !== "Personal" && (
+          {selectedGroup && selectedGroup?.label !== "Personal" && (
             <FormSelect<z.infer<typeof txnFormSchema>>
               name="grpTxnType"
               label={"Split"}
@@ -106,15 +146,15 @@ export default function TxnForm() {
           )}
         </div>
 
+        <FormInput<z.infer<typeof txnFormSchema>>
+          name="description"
+          label={"Description"}
+        />
+
         <FormSelect<z.infer<typeof txnFormSchema>>
           name="category"
           label={"Category"}
           options={categoryOptions}
-        />
-
-        <FormInput<z.infer<typeof txnFormSchema>>
-          name="description"
-          label={"Description"}
         />
 
         <div className="flex w-full gap-4">
@@ -133,12 +173,13 @@ export default function TxnForm() {
           label={formData.isIncome ? "To Account" : "From Account"}
           options={acctOptions}
           defaultValue={defAcctId}
+          isLoading={isAcctsLoading}
         />
 
         <div className="flex w-full justify-end gap-4">
           <Button
             type="submit"
-            // isLoading={createAccount.isPending || updateAccount.isPending}
+            isLoading={createTxn.isPending || updateTxn.isPending}
           >
             Submit
           </Button>

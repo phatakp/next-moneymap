@@ -4,7 +4,7 @@ import {
   createSelectSchema,
   createUpdateSchema,
 } from "drizzle-zod";
-import type { z } from "zod";
+import { z } from "zod";
 import { users, usersSchema } from "./users.schema";
 
 export const groups = pgTable("groups", {
@@ -38,6 +38,12 @@ export const groupUsersUpdateSchema = createUpdateSchema(groupUsers);
 
 //form schemas
 export const groupIdSchema = groupsSchema.pick({ id: true });
+export const groupFormSchema = groupsInsertSchema.extend({
+  name: z
+    .string({ required_error: "Name is required" })
+    .min(2, "Name is required"),
+  users: z.array(z.string()).min(2, "Atleast 2 users required for group"),
+});
 
 //type
 export type GroupWithUsers = z.infer<typeof groupsSchema> & {

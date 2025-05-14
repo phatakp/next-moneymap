@@ -4,13 +4,14 @@ import type { SelectOption } from "@/components/shared/form-select";
 import type {
   AccountWithBank,
   FullTransaction,
-  GroupWithUsers,
+  groupsSchema,
 } from "@/server/db/schema";
 import { api } from "@/trpc/react";
 import React, { useEffect, useState } from "react";
+import type { z } from "zod";
 
 type TxnFormContextProps = {
-  groups: GroupWithUsers[] | undefined;
+  groups: z.infer<typeof groupsSchema>[] | undefined;
   accounts: AccountWithBank[] | undefined;
   isGroupLoading: boolean;
   isAcctsLoading: boolean;

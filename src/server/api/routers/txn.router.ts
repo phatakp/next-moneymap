@@ -26,7 +26,7 @@ export const txnRouter = createTRPCRouter({
           message: "Could not find account",
         });
 
-      await ctx.db.transaction(async (tx) => {
+      return await ctx.db.transaction(async (tx) => {
         const [txn] = await tx.insert(transactions).values(input).returning();
         if (!txn)
           throw new TRPCError({
@@ -47,6 +47,8 @@ export const txnRouter = createTRPCRouter({
             value: sql`${bankAccounts.value} + ${amt}`,
           })
           .where(eq(bankAccounts.id, txn?.acctId));
+
+        return txn;
       });
     }),
 
@@ -79,11 +81,12 @@ export const txnRouter = createTRPCRouter({
           code: "NOT_FOUND",
           message: "Account not found",
         });
-      await ctx.db.transaction(async (tx) => {
-        await tx
+      return await ctx.db.transaction(async (tx) => {
+        const [trn] = await tx
           .update(transactions)
           .set(values)
-          .where(eq(transactions.id, id));
+          .where(eq(transactions.id, id))
+          .returning();
 
         if (txn.acctId !== input.acctId) {
           const oldAmt = txn.isIncome
@@ -131,6 +134,8 @@ export const txnRouter = createTRPCRouter({
             })
             .where(eq(bankAccounts.id, txn?.acctId));
         }
+
+        return trn;
       });
     }),
 

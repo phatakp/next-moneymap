@@ -22,7 +22,7 @@ export const userRouter = createTRPCRouter({
         message: "Cash Account Bank not found",
       });
 
-    const user = await ctx.db.transaction(async (tx) => {
+    return await ctx.db.transaction(async (tx) => {
       // Create User Profile
       const user: z.infer<typeof usersInsertSchema> = {
         id: ctx.user.id,
@@ -31,19 +31,33 @@ export const userRouter = createTRPCRouter({
         lastName: ctx.user.lastName,
         image: ctx.user.imageUrl,
       };
-      await tx.insert(users).values(user);
+      await tx
+        .insert(users)
+        .values(user)
+        .onConflictDoUpdate({
+          target: users.id,
+          set: {
+            email: ctx.user.primaryEmailAddress?.emailAddress ?? "",
+            firstName: ctx.user.firstName ?? "",
+            lastName: ctx.user.lastName,
+            image: ctx.user.imageUrl,
+          },
+        });
 
       // Create Cash Account
-      await tx.insert(bankAccounts).values({
-        name: "Cash Account",
-        num: "XXXX-0000",
-        balance: 0,
-        value: 0,
-        bankId: cashAcct.id,
-        userId: ctx.user.id,
-        isAsset: true,
-        isLiquid: true,
-      });
+      await tx
+        .insert(bankAccounts)
+        .values({
+          name: "Cash Account",
+          num: "XXXX-0000",
+          balance: 0,
+          value: 0,
+          bankId: cashAcct.id,
+          userId: ctx.user.id,
+          isAsset: true,
+          isLiquid: true,
+        })
+        .onConflictDoNothing();
 
       //Create Personal Group
       const [grp] = await tx
@@ -51,7 +65,8 @@ export const userRouter = createTRPCRouter({
         .values({
           name: "Personal",
         })
-        .returning();
+        .returning()
+        .onConflictDoNothing();
 
       if (!grp?.id)
         throw new TRPCError({
@@ -61,12 +76,11 @@ export const userRouter = createTRPCRouter({
 
       await tx
         .insert(groupUsers)
-        .values({ groupId: grp.id, userId: ctx.user.id });
+        .values({ groupId: grp.id, userId: ctx.user.id })
+        .onConflictDoNothing();
 
       return user;
     });
-
-    return user;
   }),
 
   me: protectedProcedure.query(async ({ ctx }) => {
@@ -86,4 +100,9 @@ export const userRouter = createTRPCRouter({
         .returning();
       return user;
     }),
+
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    const users = await ctx.db.query.users.findMany();
+    return users;
+  }),
 });
